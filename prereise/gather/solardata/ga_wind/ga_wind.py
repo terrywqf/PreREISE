@@ -7,7 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from prereise.gather.solardata.ga_wind.helpers import ll2ij
-from prereise.gather.solardata.helpers import get_plant_info_unique_location
+from prereise.gather.solardata.helpers import get_plant_id_unique_location
 
 
 def retrieve_data(
@@ -16,20 +16,19 @@ def retrieve_data(
     """Retrieves irradiance data from Gridded Atmospheric Wind Integration
     National dataset.
 
-    :param pandas.DataFrame solar_plant: data frame with *'lat'*, *'lon'* and
-        *'Pmax'* as columns and *'plant_id'* as indices.
+    :param pandas.DataFrame solar_plant: plant data frame.
     :param str hs_api_key: API key.
     :param str start_date: start date.
     :param str end_date: end date.
-    :return: (*pandas.DataFrame*) -- data frame with *'Pout'*, *'plant_id'*,
-        *'ts'* and *'ts_id'* as columns. The power output is in MWh.
+    :return: (*pandas.DataFrame*) -- data frame with *'Pout'*, *'plant_id'*, *'ts'* and
+        *'ts_id'* as columns. Values are power output for a 1MW generator.
     """
 
     # Identify unique location
-    coord = get_plant_info_unique_location(solar_plant)
+    coord = get_plant_id_unique_location(solar_plant)
 
     # Build query
-    hs_endpoint = "https://developer.nrel.gov/api/hsds/"
+    hs_endpoint = "https://developer.nrel.gov/api/hsds"
     hs_username = None
     hs_password = None
 
@@ -66,8 +65,7 @@ def retrieve_data(
 
         for i in coord[key]:
             data_site = data_loc.copy()
-            data_site["Pout"] *= i[1]
-            data_site["plant_id"] = i[0]
+            data_site["plant_id"] = i
 
             data = data.append(data_site, ignore_index=True, sort=False)
 
