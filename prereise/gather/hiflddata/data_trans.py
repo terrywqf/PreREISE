@@ -315,7 +315,9 @@ def write_bus(clean_data, zone_dic, kv_dict):
     for _, row in clean_data.iterrows():
         sub = (row["LATITUDE"], row["LONGITUDE"])
         if sub in kv_dict:
-            data.append((row["ID"], round(row["Pd"], 3), zone_dic[row["STATE"]], kv_dict[sub]))
+            data.append(
+                (row["ID"], round(row["Pd"], 3), zone_dic[row["STATE"]], kv_dict[sub])
+            )
         else:
             missing_sub.append(sub)
 
