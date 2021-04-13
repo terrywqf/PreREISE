@@ -6,6 +6,7 @@ from collections import defaultdict
 import networkx as nx
 import pandas as pd
 from haversine import Unit, haversine
+from prereise.gather.hiflddata.load_dist import compute_load_dist
 
 
 def get_zone(z_csv):
@@ -28,7 +29,7 @@ def clean(e_csv, zone_dic):
     :return: (*pandas.DataFrame*) -- a pandas Dataframe storing the substations after dropping the invalid ones.
     """
 
-    return pd.read_csv(e_csv).query(
+    return pd.read_csv(e_csv, dtype={"COUNTYFIPS": str}).query(
         "STATE in @zone_dic and STATUS == 'IN SERVICE' and LINES != 0"
     )
 
@@ -314,7 +315,7 @@ def write_bus(clean_data, zone_dic, kv_dict):
     for _, row in clean_data.iterrows():
         sub = (row["LATITUDE"], row["LONGITUDE"])
         if sub in kv_dict:
-            data.append((row["ID"], 0, zone_dic[row["STATE"]], kv_dict[sub]))
+            data.append((row["ID"], round(row["Pd"], 3), zone_dic[row["STATE"]], kv_dict[sub]))
         else:
             missing_sub.append(sub)
 
@@ -568,6 +569,7 @@ def data_transform(e_csv, t_csv, z_csv):
     print("Island Detection: max island size = ", len(get_max_island(graph)))
     kv_dict, to_cal = init_kv(clean_data)
     cal_kv(n_dict, graph, kv_dict, to_cal)
+    compute_load_dist(clean_data, kv_dict)
     bus_id_to_kv = get_bus_id_to_kv(clean_data, kv_dict)
     calculate_reactance_and_rate_a(bus_id_to_kv, lines, raw_lines)
 

@@ -7,6 +7,9 @@ https://hifld-geoplatform.opendata.arcgis.com/datasets/electric-power-transmissi
 https://hifld-geoplatform.opendata.arcgis.com/datasets/electric-substations
 - PowerPlant:
 https://hifld-geoplatform.opendata.arcgis.com/datasets/power-plants
+- U.S Population:
+https://simplemaps.com/data/us-counties
+https://simplemaps.com/data/us-zips
 
 
 ### Sample Output Data
